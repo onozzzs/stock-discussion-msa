@@ -1,0 +1,5 @@
+rootProject.name = 'multi-module'
+include 'user-service'
+include 'activity-service'
+include 'newsfeed-service'
+include 'gateway-service'

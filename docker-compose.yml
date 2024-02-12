@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8.3.0
+    container_name: mysql_db
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: mysql_db
+      MYSQL_ROOT_PASSWORD: "0000"
+    restart: always
+
+  redis:
+    image: redis:latest
+    container_name: redis_db
+    ports:
+      - 6379:6379
+
+  adminer:
+    image: adminer
+    container_name: mysql_adminer
+    restart: always
+    ports:
+      - 9090:8080
