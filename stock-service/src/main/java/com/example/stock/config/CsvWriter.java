@@ -7,6 +7,8 @@ import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 @Configuration
 @RequiredArgsConstructor
 public class CsvWriter implements ItemWriter<Stock> {
@@ -14,7 +16,6 @@ public class CsvWriter implements ItemWriter<Stock> {
 
     @Override
     public void write(Chunk<? extends Stock> chunk) throws Exception {
-        System.out.println(chunk.getItems());
-        stockRepository.saveAll(chunk.getItems());
+        stockRepository.saveAll((List<Stock>) chunk.getItems());
     }
 }
