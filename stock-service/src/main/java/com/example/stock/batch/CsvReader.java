@@ -1,4 +1,4 @@
-package com.example.stock.config;
+package com.example.stock.batch;
 
 import com.example.stock.dto.StockDTO;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -17,7 +17,7 @@ public class CsvReader {
     public FlatFileItemReader<StockDTO> csvFileItemReader() {
         return new FlatFileItemReaderBuilder<StockDTO>()
                 .name("csvFileItemReader")
-                .resource(new FileSystemResource("C:/Users/wwwoo/Desktop/multi-module/csv/stock-daily-5.csv"))
+                .resource(new FileSystemResource("C:/Users/wwwoo/Desktop/multi-module/csv/stock-daily-today.csv"))
                 .lineTokenizer(new DelimitedLineTokenizer())
                 .linesToSkip(1)
                 .encoding("UTF-8")

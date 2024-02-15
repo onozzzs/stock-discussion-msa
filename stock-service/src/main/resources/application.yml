@@ -11,7 +11,10 @@ spring:
   batch:
     jdbc:
       initialize-schema: always
-
+  data:
+    web:
+      pageable:
+        default-page-size: 20
   jpa:
     open-in-view: false
     properties:

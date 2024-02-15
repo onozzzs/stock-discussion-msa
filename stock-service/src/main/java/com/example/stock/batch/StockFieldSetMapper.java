@@ -1,4 +1,4 @@
-package com.example.stock.config;
+package com.example.stock.batch;
 
 import com.example.stock.dto.StockDTO;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
