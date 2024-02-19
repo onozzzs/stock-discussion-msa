@@ -18,9 +18,11 @@ public class Post extends BaseTimeEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "writer")
-    private User writer;
+    private String ticker;
+
+    private String userId;
+
+    private String username;
 
     private String title;
 

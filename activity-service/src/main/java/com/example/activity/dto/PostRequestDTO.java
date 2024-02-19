@@ -13,11 +13,13 @@ import lombok.NoArgsConstructor;
 public class PostRequestDTO {
     private String title;
     private String content;
+    private String ticker;
 
     public static Post toEntity(PostRequestDTO postRequestDTO) {
         return Post.builder()
                 .title(postRequestDTO.getTitle())
                 .content(postRequestDTO.getContent())
+                .ticker(postRequestDTO.getTicker())
                 .build();
     }
 }

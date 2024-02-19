@@ -44,9 +44,9 @@ public class PostActivityServiceImpl implements ActivityService {
                 .build();
 
         activityRepository.save(activity);
-        if (post.getWriter().getId() != userId) {
+        if (post.getUserId() != userId) {
             NotificationRequestDTO notificationDTO = NotificationRequestDTO.builder()
-                    .receiver(post.getWriter().getId())
+                    .receiver(post.getUserId())
                     .activityId(activity.getId())
                     .content(content)
                     .createdAt(activity.getCreatedAt())

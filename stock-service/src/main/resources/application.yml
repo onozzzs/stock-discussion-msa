@@ -9,6 +9,8 @@ spring:
     username: root
     password: "0000"
   batch:
+    job:
+      name: csvFileItemReaderJob
     jdbc:
       initialize-schema: always
   data:

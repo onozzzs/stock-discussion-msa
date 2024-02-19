@@ -1,8 +1,13 @@
 package com.example.stock.service;
 
+import com.example.stock.dto.DetailStockResponseDTO;
 import com.example.stock.dto.SearchDTO;
-import com.example.stock.model.DailyStock;
-import com.example.stock.repository.DailyStockRepository;
+import com.example.stock.model.DailyStockToday;
+import com.example.stock.model.DetailStock;
+import com.example.stock.model.Stock;
+import com.example.stock.repository.DailyStockTodayRepository;
+import com.example.stock.repository.DetailStockRepository;
+import com.example.stock.repository.StockRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +17,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+
 @Slf4j
 @Service
 public class StockService {
@@ -19,9 +28,15 @@ public class StockService {
     private int PAGE_SIZE;
 
     @Autowired
-    private DailyStockRepository dailyStockRepository;
+    private DailyStockTodayRepository dailyStockTodayRepository;
 
-    public Page<DailyStock> findAll(int page, String sortBy, String order) {
+    @Autowired
+    private DetailStockRepository detailStockRepository;
+
+    @Autowired
+    private StockRepository stockRepository;
+
+    public Page<DailyStockToday> findAll(int page, String sortBy, String order) {
         Sort sort;
         if (order.equals("desc")) {
             sort = Sort.by(Sort.Order.desc(sortBy));
@@ -30,17 +45,31 @@ public class StockService {
         }
 
         Pageable pageable = PageRequest.of(page, PAGE_SIZE, sort);
-        return dailyStockRepository.findAll(pageable);
+        return dailyStockTodayRepository.findAll(pageable);
     }
 
-    public Page<DailyStock> search(SearchDTO searchDTO) {
+    public Page<DailyStockToday> search(SearchDTO searchDTO) {
         Pageable pageable = PageRequest.of(searchDTO.getPage(), PAGE_SIZE);
         if (searchDTO.getType().equals("name")) {
-            return dailyStockRepository.findByStockNameContaining(pageable, searchDTO.getKeyword());
+            return dailyStockTodayRepository.findByStockNameContaining(pageable, searchDTO.getKeyword());
         }
         if (searchDTO.getType().equals("market")) {
-            return dailyStockRepository.findByMarketContaining(pageable, searchDTO.getKeyword());
+            return dailyStockTodayRepository.findByMarketContaining(pageable, searchDTO.getKeyword());
         }
-        return dailyStockRepository.findByTickerContaining(pageable, searchDTO.getKeyword());
+        return dailyStockTodayRepository.findByTickerContaining(pageable, searchDTO.getKeyword());
+    }
+
+    public List<DetailStockResponseDTO> retrieve(String ticker) {
+        Stock stock = stockRepository.findByTicker(ticker).orElseThrow(() -> new NoSuchElementException());
+        String name = stock.getStockName();
+
+        List<DetailStock> detailStocks = detailStockRepository.findTop4ByTickerOrderByDateDesc(ticker);
+        List<DetailStockResponseDTO> responseDTOs = new ArrayList<>();
+        for (DetailStock detailStock : detailStocks) {
+            DetailStockResponseDTO responseDTO = DetailStock.toDTO(detailStock, name);
+            responseDTOs.add(responseDTO);
+        }
+
+        return responseDTOs;
     }
 }

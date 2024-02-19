@@ -9,9 +9,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @EnableJpaAuditing
-@SpringBootApplication
 @EnableFeignClients
 @EnableDiscoveryClient
+@SpringBootApplication
 @EntityScan(basePackages = {"com.example"})
 @EnableJpaRepositories(basePackages = {"com.example"})
 public class ActivityServiceApplication{
