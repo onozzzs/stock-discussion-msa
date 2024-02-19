@@ -1,9 +1,10 @@
 package com.example.stock.controller;
 
-import com.example.activity.model.Post;
+import com.example.stock.dto.ChartDTO;
 import com.example.stock.dto.DetailStockResponseDTO;
 import com.example.stock.dto.SearchDTO;
 import com.example.stock.model.DailyStockToday;
+import com.example.stock.model.Stock;
 import com.example.stock.service.StockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,5 +38,11 @@ public class StockController {
     public ResponseEntity<?> retrieve(@RequestParam String ticker) {
         List<DetailStockResponseDTO> response = stockService.retrieve(ticker);
         return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/chart")
+    public ResponseEntity<?> retrieveChart(@RequestParam String term, @RequestParam String ticker) {
+        List<ChartDTO> chartDTOs = stockService.retrieveChart(term, ticker);
+        return ResponseEntity.ok().body(chartDTOs);
     }
 }

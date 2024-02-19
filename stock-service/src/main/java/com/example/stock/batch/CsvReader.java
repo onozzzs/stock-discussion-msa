@@ -43,7 +43,7 @@ public class CsvReader {
     public FlatFileItemReader<StockDTO> csvFileItemReader() {
         return new FlatFileItemReaderBuilder<StockDTO>()
                 .name("csvFileItemReaderStep")
-                .resource(new FileSystemResource("C:/Users/wwwoo/Desktop/multi-module/csv/stock-daily-today.csv"))
+                .resource(new FileSystemResource("C:/Users/wwwoo/Desktop/multi-module/csv/stock-daily-5.csv"))
                 .lineTokenizer(new DelimitedLineTokenizer())
                 .linesToSkip(1)
                 .encoding("UTF-8")

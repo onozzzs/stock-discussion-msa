@@ -61,3 +61,8 @@ spring:
           predicates:
             - Path=/api/post/**
             - Method=GET, POST
+        - id: stock-service
+          uri: lb://STOCK-SERVICE
+          predicates:
+            - Path=/api/stock/**
+            - Method=GET, POST

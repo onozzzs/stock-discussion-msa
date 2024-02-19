@@ -1,10 +1,13 @@
 package com.example.stock.service;
 
+import com.example.stock.dto.ChartDTO;
 import com.example.stock.dto.DetailStockResponseDTO;
 import com.example.stock.dto.SearchDTO;
+import com.example.stock.model.DailyStock;
 import com.example.stock.model.DailyStockToday;
 import com.example.stock.model.DetailStock;
 import com.example.stock.model.Stock;
+import com.example.stock.repository.DailyStockRepository;
 import com.example.stock.repository.DailyStockTodayRepository;
 import com.example.stock.repository.DetailStockRepository;
 import com.example.stock.repository.StockRepository;
@@ -17,9 +20,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -29,6 +34,9 @@ public class StockService {
 
     @Autowired
     private DailyStockTodayRepository dailyStockTodayRepository;
+
+    @Autowired
+    private DailyStockRepository dailyStockRepository;
 
     @Autowired
     private DetailStockRepository detailStockRepository;
@@ -71,5 +79,32 @@ public class StockService {
         }
 
         return responseDTOs;
+    }
+
+    public List<ChartDTO> retrieveChart(String term, String ticker) {
+        LocalDate startDate;
+        LocalDate endDate = LocalDate.now();
+
+        log.info("term" + term + " ticker" + ticker);
+        if (term.equals("1month")) {
+            startDate = endDate.minusMonths(1);
+            log.info("startDate + " + startDate);
+        } else if (term.equals("1year")) {
+            startDate = endDate.minusYears(1);
+        } else if (term.equals("3year")) {
+            startDate = endDate.minusYears(3);
+        } else if (term.equals("5year")) {
+            startDate = endDate.minusYears(5);
+        } else {
+            throw new IllegalArgumentException("Invalid term value");
+        }
+
+        List<DailyStock> stocks = dailyStockRepository.findByTickerAndDateBetween(ticker, startDate, endDate);
+        return convertToChartDTO(stocks);
+    }
+
+    private List<ChartDTO> convertToChartDTO(List<DailyStock> stocks) {
+        List<ChartDTO> chartDTOs = stocks.stream().map(ChartDTO::new).collect(Collectors.toList());
+        return chartDTOs;
     }
 }
