@@ -50,7 +50,7 @@ public class XmlParser {
                 long high = Long.parseLong(values[2]);
                 long low = Long.parseLong(values[3]);
                 long close = Long.parseLong(values[4]);
-                double volume = Double.parseDouble(values[5]);
+                long volume = Long.parseLong(values[5]);
 
                 DailyStock dailyStock = new DailyStock(ticker, open, close, high, low, volume, date);
                 dailyStockList.add(dailyStock);
