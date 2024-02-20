@@ -1,7 +1,7 @@
-package com.example.stock.batch;
+package com.example.batch.component.writer;
 
-import com.example.stock.model.DetailStock;
-import com.example.stock.repository.BatchRepository;
+import com.example.batch.model.DetailStock;
+import com.example.batch.repository.BatchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;

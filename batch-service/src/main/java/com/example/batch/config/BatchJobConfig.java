@@ -1,10 +1,14 @@
-package com.example.stock.batch;
+package com.example.batch.config;
 
-import com.example.stock.dto.DetailStockDTO;
-import com.example.stock.dto.StockDTO;
-import com.example.stock.model.DailyStock;
-import com.example.stock.model.DetailStock;
-import com.example.stock.model.Stock;
+import com.example.batch.component.reader.CsvReader;
+import com.example.batch.component.reader.DailyStockItemReader;
+import com.example.batch.component.writer.DailyStockItemWriter;
+import com.example.batch.component.writer.DetailStockItemWriter;
+import com.example.batch.component.writer.StockItemWriter;
+import com.example.batch.dto.DetailStockDTO;
+import com.example.batch.model.DailyStock;
+import com.example.batch.model.DetailStock;
+import com.example.batch.model.Stock;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -16,12 +20,10 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.support.CompositeItemWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j

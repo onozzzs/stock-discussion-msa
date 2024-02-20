@@ -1,8 +1,9 @@
-package com.example.stock.batch;
+package com.example.batch.component.reader;
 
-import com.example.stock.model.DailyStock;
-import com.example.stock.model.Stock;
-import com.example.stock.repository.StockRepository;
+import com.example.batch.config.XmlParser;
+import com.example.batch.model.DailyStock;
+import com.example.batch.model.Stock;
+import com.example.batch.repository.StockRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.beans.factory.annotation.Autowired;

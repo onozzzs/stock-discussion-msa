@@ -1,8 +1,8 @@
-package com.example.stock.batch;
+package com.example.batch.component.reader;
 
-import com.example.stock.dto.DetailStockDTO;
-import com.example.stock.dto.StockDTO;
-import com.example.stock.model.Stock;
+import com.example.batch.config.DetailStockFieldSetMapper;
+import com.example.batch.dto.DetailStockDTO;
+import com.example.batch.model.Stock;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;

@@ -1,6 +1,6 @@
-package com.example.stock.batch;
+package com.example.batch.config;
 
-import com.example.stock.model.DailyStock;
+import com.example.batch.model.DailyStock;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;

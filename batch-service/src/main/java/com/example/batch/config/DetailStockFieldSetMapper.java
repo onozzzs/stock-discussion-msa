@@ -1,6 +1,6 @@
-package com.example.stock.batch;
+package com.example.batch.config;
 
-import com.example.stock.dto.DetailStockDTO;
+import com.example.batch.dto.DetailStockDTO;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.validation.BindException;

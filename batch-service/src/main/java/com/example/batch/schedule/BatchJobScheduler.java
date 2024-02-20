@@ -1,4 +1,4 @@
-package com.example.stock.batch;
+package com.example.batch.schedule;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;

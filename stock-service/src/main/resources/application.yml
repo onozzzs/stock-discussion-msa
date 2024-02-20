@@ -11,11 +11,6 @@ spring:
     url: jdbc:mysql://localhost:3306/mysql_db?serverTimezone=Asia/Seoul
     username: root
     password: "0000"
-  batch:
-    job:
-      name: csvFileItemReaderJob
-    jdbc:
-      initialize-schema: always
   data:
     web:
       pageable:

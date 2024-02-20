@@ -1,6 +1,6 @@
-package com.example.stock.batch;
+package com.example.batch.component.writer;
 
-import com.example.stock.model.DailyStock;
+import com.example.batch.model.DailyStock;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.Chunk;
