@@ -34,16 +34,11 @@ public class DailyStockItemReader implements ItemReader<List<DailyStock>> {
             dailyStocks = new ArrayList<>();
             stocks = stockRepository.findAll();
             log.info("==========================reader, read");
-            int i = 0;
             for (Stock stock : stocks) {
-                i += 1;
                 String symbol = stock.getTicker();
                 String url = apiUrl + "symbol=" + String.valueOf(symbol) + "&timeframe=day&count=1266&requestType=0";
                 String xmlResponse = fetchDataFromApi(url);
                 dailyStocks.addAll(xmlParser.parseXml(xmlResponse, symbol));
-                if (i > 2) {
-                    break;
-                }
             }
             return dailyStocks;
         }

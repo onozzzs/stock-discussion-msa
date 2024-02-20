@@ -22,7 +22,8 @@ public class CsvReader {
     public FlatFileItemReader<Stock> stockItemReader() {
         return new FlatFileItemReaderBuilder<Stock>()
                 .name("stockItemReader")
-                .resource(new FileSystemResource("C:/Users/wwwoo/Desktop/multi-module/csv/stock_all.csv"))
+//                .resource(new FileSystemResource("/var/jenkins_home/workspace/spring-batch/csv/stock_all.csv"))
+                .resource(new FileSystemResource("C:/Users/wwwoo/Desktop/multi-module/batch-service/csv/stock_all.csv"))
                 .lineTokenizer(new DelimitedLineTokenizer())
                 .linesToSkip(1)
                 .encoding("UTF-8")
@@ -44,7 +45,8 @@ public class CsvReader {
     public FlatFileItemReader<DetailStockDTO> detailItemReader() {
         return new FlatFileItemReaderBuilder<DetailStockDTO>()
                 .name("detailItemReaderStep")
-                .resource(new FileSystemResource("C:/Users/wwwoo/Desktop/multi-module/csv/total_fundamental.csv"))
+//                .resource(new FileSystemResource("/var/jenkins_home/workspace/spring-batch/csv/total_fundamental.csv"))
+                .resource(new FileSystemResource("C:/Users/wwwoo/Desktop/multi-module/batch-service/csv//total_fundamental.csv"))
                 .lineTokenizer(new DelimitedLineTokenizer())
                 .linesToSkip(1)
                 .encoding("UTF-8")
