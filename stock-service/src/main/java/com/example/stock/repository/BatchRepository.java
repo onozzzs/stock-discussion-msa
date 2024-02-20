@@ -1,6 +1,5 @@
 package com.example.stock.repository;
 
-import com.example.stock.model.DailyStock;
 import com.example.stock.model.DetailStock;
 import com.example.stock.model.Stock;
 import jakarta.transaction.Transactional;
@@ -24,34 +23,14 @@ public class BatchRepository {
 
     @Transactional
     public void saveStock(List<Stock> stocks, String table) {
-        String sql = "INSERT INTO " + table + "(stock_name, ticker) " + "VALUES (?, ?)";
+        String sql = "INSERT INTO " + table + "(stock_name, ticker, market) " + "VALUES (?, ?, ?)";
         jdbcTemplate.batchUpdate(sql,
                 stocks,
                 500,
                 (PreparedStatement ps, Stock stock) -> {
                     ps.setString(1, stock.getStockName());
                     ps.setString(2, stock.getTicker());
-                });
-    }
-
-    @Transactional
-    public void saveAll(List<DailyStock> stocks, String table) {
-        String sql = "INSERT INTO " + table + "(date, high, low, open, close, fluctuation_rate, volume, stock_name, ticker, market)" +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.batchUpdate(sql,
-                stocks,
-                2000,
-                (PreparedStatement ps, DailyStock stock) -> {
-                    ps.setDate(1, Date.valueOf(stock.getDate()));
-                    ps.setLong(2, stock.getHigh());
-                    ps.setLong(3, stock.getLow());
-                    ps.setLong(4, stock.getOpen());
-                    ps.setLong(5, stock.getClose());
-                    ps.setDouble(6, stock.getFluctuationRate());
-                    ps.setLong(7, stock.getVolume());
-                    ps.setString(8, stock.getStockName());
-                    ps.setString(9, stock.getTicker());
-                    ps.setString(10, stock.getMarket());
+                    ps.setString(3, stock.getMarket());
                 });
     }
 

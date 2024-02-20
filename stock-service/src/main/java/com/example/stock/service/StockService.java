@@ -44,7 +44,7 @@ public class StockService {
     @Autowired
     private StockRepository stockRepository;
 
-    public Page<DailyStockToday> findAll(int page, String sortBy, String order) {
+    public Page<DailyStock> findAll(int page, String sortBy, String order) {
         Sort sort;
         if (order.equals("desc")) {
             sort = Sort.by(Sort.Order.desc(sortBy));
@@ -53,7 +53,7 @@ public class StockService {
         }
 
         Pageable pageable = PageRequest.of(page, PAGE_SIZE, sort);
-        return dailyStockTodayRepository.findAll(pageable);
+        return dailyStockRepository.findLatestByName(pageable);
     }
 
     public Page<DailyStockToday> search(SearchDTO searchDTO) {

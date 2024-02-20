@@ -18,37 +18,38 @@ public class DailyStock {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String stockName;
-
     private String ticker;
 
-    private Long open;
+    private long open;
 
-    private Long close;
+    private long close;
 
-    private Long high;
+    private long high;
 
-    private Long low;
+    private long low;
 
-    private Long volume;
-
-    private Double fluctuationRate;
-
-    private String market;
+    private double volume;
 
     private LocalDate date;
 
     public DailyStock(StockDTO stockDTO) {
-        this.stockName = stockDTO.getStock_name();
-        this.ticker = stockDTO.getTicker();
         this.open = stockDTO.getOpen();
         this.close = stockDTO.getClose();
         this.high = stockDTO.getHigh();
         this.low = stockDTO.getLow();
         this.volume = stockDTO.getVolume();
-        this.fluctuationRate = stockDTO.getFluctuationRate();
-        this.market = stockDTO.getMarket();
+        this.ticker = stockDTO.getTicker();
         this.date = convertStringToLocalDateTime(stockDTO.getDate());
+    }
+
+    public DailyStock(String ticker, long open, long close, long high, long low, double volume, LocalDate date) {
+        this.ticker = ticker;
+        this.open = open;
+        this.close = close;
+        this.high = high;
+        this.low = low;
+        this.volume = volume;
+        this.date = date;
     }
 
     private LocalDate convertStringToLocalDateTime(String dateString) {

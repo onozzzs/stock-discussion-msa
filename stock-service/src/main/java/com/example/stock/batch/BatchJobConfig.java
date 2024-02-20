@@ -22,15 +22,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-public class FilterItemReaderJobConfig {
+public class BatchJobConfig {
     private final CsvReader csvReader;
-    private final CsvWriter csvWriter;
+    private final DailyStockItemReader dailyStockItemReader;
+    private final DailyStockItemWriter dailyStockItemWriter;
     private final StockItemWriter stockItemWriter;
-    private final DailyStockWriter dailyStockWriter;
     private final DetailStockItemWriter detailStockItemWriter;
 
     private static final int chunkSize = 1000;
@@ -39,15 +40,16 @@ public class FilterItemReaderJobConfig {
     public Job csvFileItemReaderJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new JobBuilder("csvFileItemReaderJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
-                .start(csvFileItemReaderStep(jobRepository, transactionManager))
+                .start(stockItemReaderStep(jobRepository, transactionManager))
+                .next(dailyStockItemReaderStep(jobRepository, transactionManager))
                 .next(detailItemReaderStep(jobRepository, transactionManager))
-                .next(stockItemReaderStep(jobRepository, transactionManager))
                 .build();
     }
 
     @JobScope
     @Bean
     public Step stockItemReaderStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        log.info("===========stockItemReaderStep");
         return new StepBuilder("stockItemReaderStep", jobRepository)
                 .<Stock, Stock>chunk(chunkSize, transactionManager)
                 .reader(csvReader.stockItemReader())
@@ -57,12 +59,11 @@ public class FilterItemReaderJobConfig {
 
     @JobScope
     @Bean
-    public Step csvFileItemReaderStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-        return new StepBuilder("csvFileItemReaderStep", jobRepository)
-                .<StockDTO, DailyStock>chunk(chunkSize, transactionManager)
-                .reader(csvReader.csvFileItemReader())
-                .processor(stockItemProcessor())
-                .writer(compositeItemWriter())
+    public Step dailyStockItemReaderStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new StepBuilder("dailyStockItemReaderStep", jobRepository)
+                .<List<DailyStock>, List<DailyStock>>chunk(chunkSize, transactionManager)
+                .reader(dailyStockItemReader)
+                .writer(dailyStockItemWriter)
                 .build();
     }
 
@@ -79,17 +80,6 @@ public class FilterItemReaderJobConfig {
 
     @StepScope
     @Bean
-    public ItemProcessor<StockDTO, DailyStock> stockItemProcessor() {
-        return new ItemProcessor<StockDTO, DailyStock>() {
-            @Override
-            public DailyStock process(StockDTO item) throws Exception {
-                return new DailyStock(item);
-            }
-        };
-    }
-
-    @StepScope
-    @Bean
     public ItemProcessor<DetailStockDTO, DetailStock> detailStockItemProcessor() {
         return new ItemProcessor<DetailStockDTO, DetailStock>() {
             @Override
@@ -97,12 +87,5 @@ public class FilterItemReaderJobConfig {
                 return new DetailStock(item);
             }
         };
-    }
-
-    @StepScope
-    public CompositeItemWriter<DailyStock> compositeItemWriter() {
-        final CompositeItemWriter<DailyStock> compositeItemWriter = new CompositeItemWriter<>();
-        compositeItemWriter.setDelegates(Arrays.asList(csvWriter, dailyStockWriter));
-        return compositeItemWriter;
     }
 }

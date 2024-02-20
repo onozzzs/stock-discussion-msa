@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Builder
 @Entity
 @Data
@@ -21,4 +19,6 @@ public class Stock {
     private String ticker;
 
     private String stockName;
+
+    private String market;
 }

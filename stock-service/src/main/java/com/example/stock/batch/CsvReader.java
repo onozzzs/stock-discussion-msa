@@ -30,24 +30,12 @@ public class CsvReader {
                     @Override
                     public Stock mapFieldSet(FieldSet fieldSet) throws BindException {
                         return Stock.builder()
-                                .stockName(fieldSet.readString(1))
-                                .ticker(fieldSet.readString(2))
+                                .ticker(fieldSet.readString(1))
+                                .stockName(fieldSet.readString(2))
+                                .market(fieldSet.readString(3))
                                 .build();
                     }
                 })
-                .build();
-    }
-
-    @Bean
-    @StepScope
-    public FlatFileItemReader<StockDTO> csvFileItemReader() {
-        return new FlatFileItemReaderBuilder<StockDTO>()
-                .name("csvFileItemReaderStep")
-                .resource(new FileSystemResource("C:/Users/wwwoo/Desktop/multi-module/csv/stock-daily-5.csv"))
-                .lineTokenizer(new DelimitedLineTokenizer())
-                .linesToSkip(1)
-                .encoding("UTF-8")
-                .fieldSetMapper(new StockFieldSetMapper())
                 .build();
     }
 

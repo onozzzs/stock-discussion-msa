@@ -1,6 +1,5 @@
 package com.example.stock.batch;
 
-import com.example.stock.model.DailyStock;
 import com.example.stock.model.DetailStock;
 import com.example.stock.repository.BatchRepository;
 import lombok.RequiredArgsConstructor;
