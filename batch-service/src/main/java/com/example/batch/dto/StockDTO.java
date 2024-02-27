@@ -13,7 +13,6 @@ public class StockDTO {
     private Long low;
     private Long close;
     private Long volume;
-    private Double fluctuationRate;
     private String ticker;
     private String stock_name;
     private String market;

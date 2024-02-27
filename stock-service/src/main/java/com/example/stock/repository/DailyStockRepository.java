@@ -12,7 +12,6 @@ import java.util.Optional;
 
 @Repository
 public interface DailyStockRepository extends JpaRepository<DailyStock, Long> {
-    LocalDate findEarliestDateByTicker(String ticker);
     DailyStock findByTicker(String ticker);
     Optional<DailyStock> findTopByTickerOrderByDateDesc(String ticker);
     List<DailyStock> findByTickerAndDateBetween(String ticker, LocalDate startDate, LocalDate endDate);

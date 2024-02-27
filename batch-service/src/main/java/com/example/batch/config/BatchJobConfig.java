@@ -9,7 +9,6 @@ import com.example.batch.component.writer.StockItemWriter;
 import com.example.batch.dto.DetailStockDTO;
 import com.example.batch.model.DailyStock;
 import com.example.batch.model.DetailStock;
-import com.example.batch.model.MovingAverage;
 import com.example.batch.model.Stock;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

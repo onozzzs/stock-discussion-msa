@@ -1,12 +1,8 @@
 package com.example.stock.dto;
 
 import com.example.stock.model.DailyStock;
-import com.example.stock.model.Stock;
-import lombok.Builder;
 import lombok.Data;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Data
 public class StockDTO {

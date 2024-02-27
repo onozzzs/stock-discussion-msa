@@ -1,6 +1,5 @@
 package com.example.batch.component.writer;
 
-import com.example.batch.model.DetailStock;
 import com.example.batch.model.Stock;
 import com.example.batch.repository.BatchRepository;
 import lombok.RequiredArgsConstructor;

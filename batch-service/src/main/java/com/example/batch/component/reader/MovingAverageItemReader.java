@@ -1,15 +1,11 @@
 package com.example.batch.component.reader;
 
 import com.example.batch.model.DailyStock;
-import com.example.batch.model.MovingAverage;
 import com.example.batch.model.Stock;
 import com.example.batch.repository.DailyStockRepository;
 import com.example.batch.repository.StockRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.NonTransientResourceException;
-import org.springframework.batch.item.ParseException;
-import org.springframework.batch.item.UnexpectedInputException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,11 +25,8 @@ public class MovingAverageItemReader implements ItemReader<List<DailyStock>> {
     private StockRepository stockRepository;
 
 
-
     @Override
     public List<DailyStock> read() throws Exception {
-        // 데이터 읽기(stockName, date, close)
-
         return null;
     }
 }

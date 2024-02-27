@@ -16,7 +16,6 @@ public class StockFieldSetMapper implements FieldSetMapper<StockDTO> {
                 .low(fieldSet.readLong(4))
                 .close(fieldSet.readLong(5))
                 .volume(fieldSet.readLong(6))
-                .fluctuationRate(fieldSet.readDouble(7))
                 .ticker(fieldSet.readString(8))
                 .stock_name(fieldSet.readString(9))
                 .market(fieldSet.readString(10))

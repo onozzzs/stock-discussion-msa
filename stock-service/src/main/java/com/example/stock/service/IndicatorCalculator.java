@@ -1,10 +1,10 @@
 package com.example.stock.service;
 
-import com.example.stock.dto.ClosePriceDTO;
+import com.example.stock.model.DailyStock;
 
 import java.util.List;
 
 @FunctionalInterface
 public interface IndicatorCalculator {
-    Double calculate(List<ClosePriceDTO> stocks);
+    Double calculate(List<DailyStock> stocks);
 }
