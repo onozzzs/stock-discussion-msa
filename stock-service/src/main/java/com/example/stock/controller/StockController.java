@@ -3,8 +3,8 @@ package com.example.stock.controller;
 import com.example.stock.dto.ChartDTO;
 import com.example.stock.dto.DetailStockResponseDTO;
 import com.example.stock.dto.SearchDTO;
+import com.example.stock.dto.StockDTO;
 import com.example.stock.model.DailyStock;
-import com.example.stock.model.DailyStockToday;
 import com.example.stock.service.StockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,7 +33,7 @@ public class StockController {
 
     @GetMapping("/search")
     public ResponseEntity<?> search(@RequestBody SearchDTO searchDTO) {
-        Page<DailyStockToday> stockPage = stockService.search(searchDTO);
+        Page<StockDTO> stockPage = stockService.search(searchDTO);
         return ResponseEntity.ok().body(stockPage);
     }
 

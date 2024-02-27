@@ -39,7 +39,7 @@ public class DailyStock {
         this.low = stockDTO.getLow();
         this.volume = stockDTO.getVolume();
         this.ticker = stockDTO.getTicker();
-        this.date = convertStringToLocalDateTime(stockDTO.getDate());
+        this.date = stockDTO.getDate();
     }
 
     public DailyStock(String ticker, long open, long close, long high, long low, double volume, LocalDate date) {
@@ -49,6 +49,12 @@ public class DailyStock {
         this.high = high;
         this.low = low;
         this.volume = volume;
+        this.date = date;
+    }
+
+    public DailyStock(String ticker, LocalDate date, long close) {
+        this.ticker = ticker;
+        this.close = close;
         this.date = date;
     }
 

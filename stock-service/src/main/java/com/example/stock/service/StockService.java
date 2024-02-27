@@ -3,27 +3,24 @@ package com.example.stock.service;
 import com.example.stock.dto.ChartDTO;
 import com.example.stock.dto.DetailStockResponseDTO;
 import com.example.stock.dto.SearchDTO;
+import com.example.stock.dto.StockDTO;
 import com.example.stock.model.DailyStock;
-import com.example.stock.model.DailyStockToday;
 import com.example.stock.model.DetailStock;
 import com.example.stock.model.Stock;
 import com.example.stock.repository.DailyStockRepository;
-import com.example.stock.repository.DailyStockTodayRepository;
 import com.example.stock.repository.DetailStockRepository;
 import com.example.stock.repository.StockRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -31,9 +28,6 @@ import java.util.stream.Collectors;
 public class StockService {
     @Value("${spring.data.web.pageable.default-page-size}")
     private int PAGE_SIZE;
-
-    @Autowired
-    private DailyStockTodayRepository dailyStockTodayRepository;
 
     @Autowired
     private DailyStockRepository dailyStockRepository;
@@ -56,15 +50,37 @@ public class StockService {
         return dailyStockRepository.findLatestByName(pageable);
     }
 
-    public Page<DailyStockToday> search(SearchDTO searchDTO) {
+    public Page<StockDTO> search(SearchDTO searchDTO) {
         Pageable pageable = PageRequest.of(searchDTO.getPage(), PAGE_SIZE);
+        String keyword = searchDTO.getKeyword();
+        List<Stock> stocks = new ArrayList<>();
+
         if (searchDTO.getType().equals("name")) {
-            return dailyStockTodayRepository.findByStockNameContaining(pageable, searchDTO.getKeyword());
+            stocks = stockRepository.findByStockNameContaining(keyword);
         }
-        if (searchDTO.getType().equals("market")) {
-            return dailyStockTodayRepository.findByMarketContaining(pageable, searchDTO.getKeyword());
+        else if (searchDTO.getType().equals("market")) {
+            stocks = stockRepository.findByMarketContaining(keyword);
         }
-        return dailyStockTodayRepository.findByTickerContaining(pageable, searchDTO.getKeyword());
+        else {
+            stocks = stockRepository.findByTickerContaining(keyword);
+        }
+
+        List<StockDTO> stockDTOs = getDailyStock(stocks);
+        return new PageImpl<>(stockDTOs, pageable, stockDTOs.size());
+    }
+
+    private List<StockDTO> getDailyStock(List<Stock> stocks) {
+        List<StockDTO> stockDTOs = new ArrayList<>();
+        for (Stock stock : stocks) {
+            DailyStock dailyStock = dailyStockRepository.findTopByTickerOrderByDateDesc(stock.getTicker()).orElseThrow();
+            StockDTO stockDTO = new StockDTO(dailyStock);
+            stockDTO.setStockName(stock.getStockName());
+            stockDTO.setMarket(stock.getMarket());
+
+            stockDTOs.add(stockDTO);
+        }
+
+        return stockDTOs;
     }
 
     public List<DetailStockResponseDTO> retrieve(String ticker) {

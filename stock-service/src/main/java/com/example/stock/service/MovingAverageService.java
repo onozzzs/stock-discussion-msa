@@ -2,14 +2,9 @@ package com.example.stock.service;
 
 import com.example.stock.dto.ClosePriceDTO;
 import com.example.stock.model.DailyStock;
-import com.example.stock.model.MovingAverage;
 import com.example.stock.repository.DailyStockRepository;
-import com.netflix.discovery.converters.Auto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -18,14 +13,33 @@ import java.util.stream.Collectors;
 
 @Service
 public class MovingAverageService {
+    private IndicatorCalculator movingAverageCalculator;
+
     @Autowired
     private DailyStockRepository dailyStockRepository;
 
-    @Cacheable(value = "movingAverageCache", key = "{#ticker, #date, #days}", unless = "#result == null")
-    public Double getMovingAverage(String ticker, String date, int days) {
-        double calculatedMovingAverage = calculateMovingAverage(ticker, date, days);
-        return calculatedMovingAverage;
+    @Cacheable(value = "indicatorCache", key = "{#ticker, #date, #days, #indicatorType}", unless = "#result == null")
+    public Double calculateIndicator(String ticker, String date, int days, String indicatorType) {
+        List<ClosePriceDTO> stocks = getDailyStocksFromDatabase(ticker, date, days);
+
+        IndicatorCalculator movingAverageCalculator = stockList -> {
+            double sumOfClosePrices = stockList.stream()
+                    .mapToDouble(ClosePriceDTO::getClose)
+                    .sum();
+
+            return sumOfClosePrices / days;
+        };
+
+        Double movingAverage = movingAverageCalculator.calculate(stocks);
+        return movingAverage;
     }
+
+
+//    @Cacheable(value = "movingAverageCache", key = "{#ticker, #date, #days}", unless = "#result == null")
+//    public Double getMovingAverage(String ticker, String date, int days) {
+//        double calculatedMovingAverage = calculateMovingAverage(ticker, date, days);
+//        return calculatedMovingAverage;
+//    }
 
     private Double calculateMovingAverage(String ticker, String date, int days) {
         List<ClosePriceDTO> closePriceDTOs = getDailyStocksFromDatabase(ticker, date, days);
@@ -34,23 +48,19 @@ public class MovingAverageService {
                 .mapToDouble(ClosePriceDTO::getClose)
                 .sum();
 
-        double movingAverage = sumOfClosePrices / days;
-
-        return movingAverage;
+        return sumOfClosePrices / days;
     }
 
     private List<ClosePriceDTO> getDailyStocksFromDatabase(String ticker, String date, int days) {
-        LocalDate currentDate = LocalDate.parse(date);
+        LocalDate requestedDate = LocalDate.parse(date);
+        LocalDate startDate = requestedDate.minusDays(days - 1);
 
-        // Use Spring Data JPA repository method to fetch the required data
-        Pageable pageable = PageRequest.of(0, days);  // Assuming you want 'days' number of records
-        List<DailyStock> dailyStocks = dailyStockRepository.findByTickerAndDateBeforeOrderByDateDesc(ticker, currentDate, pageable);
+        List<DailyStock> stockDailyList = dailyStockRepository.findByTickerAndDateBetween(ticker, startDate, requestedDate);
 
-        // Convert StockDaily entities to ClosePriceDTO (modify conversion logic as needed)
-        List<ClosePriceDTO> closePriceDTOs = dailyStocks.stream()
+        List<ClosePriceDTO> closePriceDTOList = stockDailyList.stream()
                 .map(stockDaily -> new ClosePriceDTO(ticker, stockDaily.getClose(), stockDaily.getDate()))
                 .collect(Collectors.toList());
 
-        return closePriceDTOs;
+        return closePriceDTOList;
     }
 }

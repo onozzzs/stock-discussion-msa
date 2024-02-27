@@ -16,7 +16,7 @@ public class MovingAverageController {
 
     @GetMapping("/moving-average")
     public ResponseEntity<?> getMovingAverage(@RequestParam String ticker, @RequestParam String date, @RequestParam int days) {
-        double movingAverage = movingAverageService.getMovingAverage(ticker, date, days);
+        double movingAverage = movingAverageService.calculateIndicator(ticker, date, days, "movingAverage");
         return ResponseEntity.ok().body(movingAverage);
     }
 }
