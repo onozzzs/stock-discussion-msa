@@ -24,4 +24,6 @@ public interface DailyStockRepository extends JpaRepository<DailyStock, Long> {
             "WHERE (ds.ticker, ds.date) IN (" +
             "SELECT ds2.ticker, MAX(ds2.date) FROM DailyStock ds2 GROUP BY ds2.ticker)")
     Page<DailyStock> findLatestByName(Pageable pageable);
+
+    List<DailyStock> findByTickerAndDateBeforeOrderByDateDesc(String ticker, LocalDate date, Pageable pageable);
 }

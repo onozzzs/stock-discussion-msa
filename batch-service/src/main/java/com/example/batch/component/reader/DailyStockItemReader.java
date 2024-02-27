@@ -9,7 +9,6 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,10 +32,9 @@ public class DailyStockItemReader implements ItemReader<List<DailyStock>> {
         if (dailyStocks == null) {
             dailyStocks = new ArrayList<>();
             stocks = stockRepository.findAll();
-            log.info("==========================reader, read");
             for (Stock stock : stocks) {
                 String symbol = stock.getTicker();
-                String url = apiUrl + "symbol=" + String.valueOf(symbol) + "&timeframe=day&count=1266&requestType=0";
+                String url = apiUrl + "symbol=" + String.valueOf(symbol) + "&timeframe=day&count=1200&requestType=0";
                 String xmlResponse = fetchDataFromApi(url);
                 dailyStocks.addAll(xmlParser.parseXml(xmlResponse, symbol));
             }

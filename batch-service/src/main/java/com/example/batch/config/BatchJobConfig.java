@@ -2,12 +2,14 @@ package com.example.batch.config;
 
 import com.example.batch.component.reader.CsvReader;
 import com.example.batch.component.reader.DailyStockItemReader;
+import com.example.batch.component.reader.MovingAverageItemReader;
 import com.example.batch.component.writer.DailyStockItemWriter;
 import com.example.batch.component.writer.DetailStockItemWriter;
 import com.example.batch.component.writer.StockItemWriter;
 import com.example.batch.dto.DetailStockDTO;
 import com.example.batch.model.DailyStock;
 import com.example.batch.model.DetailStock;
+import com.example.batch.model.MovingAverage;
 import com.example.batch.model.Stock;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +34,8 @@ import java.util.List;
 public class BatchJobConfig {
     private final CsvReader csvReader;
     private final DailyStockItemReader dailyStockItemReader;
+    private final MovingAverageItemReader movingAverageItemReader;
+
     private final DailyStockItemWriter dailyStockItemWriter;
     private final StockItemWriter stockItemWriter;
     private final DetailStockItemWriter detailStockItemWriter;
@@ -79,6 +83,17 @@ public class BatchJobConfig {
                 .writer(detailStockItemWriter)
                 .build();
     }
+
+//    @JobScope
+//    @Bean
+//    public Step movingAverageItemStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+//        return new StepBuilder("movingAverageItemStep", jobRepository)
+//                .<List<DailyStock>, List<MovingAverage>>chunk(chunkSize, transactionManager)
+//                .reader(movingAverageItemReader)
+//                .processor(movingAverageItemProcessor())
+//                .writer(movingAverageItemWriter)
+//                .build();
+//    }
 
     @StepScope
     @Bean
