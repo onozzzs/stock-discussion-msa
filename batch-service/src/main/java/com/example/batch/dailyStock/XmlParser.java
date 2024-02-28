@@ -1,4 +1,4 @@
-package com.example.batch.config;
+package com.example.batch.dailyStock;
 
 import com.example.batch.model.DailyStock;
 import lombok.extern.slf4j.Slf4j;
