@@ -1,6 +1,5 @@
-package com.example.batch.component.reader;
+package com.example.batch.dailyStock;
 
-import com.example.batch.config.XmlParser;
 import com.example.batch.model.DailyStock;
 import com.example.batch.model.Stock;
 import com.example.batch.repository.StockRepository;
@@ -15,8 +14,7 @@ import java.util.List;
 @Slf4j
 @Component
 public class DailyStockItemReader implements ItemReader<List<DailyStock>> {
-
-    private String apiUrl = "https://fchart.stock.naver.com/sise.nhn?";
+    private static String apiUrl = "https://fchart.stock.naver.com/sise.nhn?";
 
     private List<Stock> stocks;
     private List<DailyStock> dailyStocks;

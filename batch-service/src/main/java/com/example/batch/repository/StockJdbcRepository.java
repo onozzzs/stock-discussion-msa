@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class BatchRepository {
+public class StockJdbcRepository {
     private final JdbcTemplate jdbcTemplate;
 
     private static int BATCH_SIZE = 50000;

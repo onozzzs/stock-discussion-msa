@@ -1,13 +1,9 @@
 package com.example.batch.config;
 
-import com.example.batch.component.reader.CsvReader;
-import com.example.batch.component.reader.DailyStockItemReader;
-import com.example.batch.component.reader.MovingAverageItemReader;
-import com.example.batch.component.writer.DailyStockItemWriter;
-import com.example.batch.component.writer.DetailStockItemWriter;
-import com.example.batch.component.writer.StockItemWriter;
+import com.example.batch.csv.CsvReader;
+import com.example.batch.csv.DetailStockItemWriter;
+import com.example.batch.csv.StockItemWriter;
 import com.example.batch.dto.DetailStockDTO;
-import com.example.batch.model.DailyStock;
 import com.example.batch.model.DetailStock;
 import com.example.batch.model.Stock;
 import lombok.RequiredArgsConstructor;
@@ -25,17 +21,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.util.List;
-
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class BatchJobConfig {
     private final CsvReader csvReader;
-    private final DailyStockItemReader dailyStockItemReader;
-    private final MovingAverageItemReader movingAverageItemReader;
-
-    private final DailyStockItemWriter dailyStockItemWriter;
     private final StockItemWriter stockItemWriter;
     private final DetailStockItemWriter detailStockItemWriter;
 
@@ -46,7 +36,6 @@ public class BatchJobConfig {
         return new JobBuilder("csvFileItemReaderJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .start(stockItemReaderStep(jobRepository, transactionManager))
-                .next(dailyStockItemReaderStep(jobRepository, transactionManager))
                 .next(detailItemReaderStep(jobRepository, transactionManager))
                 .build();
     }
@@ -64,16 +53,6 @@ public class BatchJobConfig {
 
     @JobScope
     @Bean
-    public Step dailyStockItemReaderStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-        return new StepBuilder("dailyStockItemReaderStep", jobRepository)
-                .<List<DailyStock>, List<DailyStock>>chunk(chunkSize, transactionManager)
-                .reader(dailyStockItemReader)
-                .writer(dailyStockItemWriter)
-                .build();
-    }
-
-    @JobScope
-    @Bean
     public Step detailItemReaderStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new StepBuilder("detailItemReaderStep", jobRepository)
                 .<DetailStockDTO, DetailStock>chunk(chunkSize, transactionManager)
@@ -82,17 +61,6 @@ public class BatchJobConfig {
                 .writer(detailStockItemWriter)
                 .build();
     }
-
-//    @JobScope
-//    @Bean
-//    public Step movingAverageItemStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-//        return new StepBuilder("movingAverageItemStep", jobRepository)
-//                .<List<DailyStock>, List<MovingAverage>>chunk(chunkSize, transactionManager)
-//                .reader(movingAverageItemReader)
-//                .processor(movingAverageItemProcessor())
-//                .writer(movingAverageItemWriter)
-//                .build();
-//    }
 
     @StepScope
     @Bean

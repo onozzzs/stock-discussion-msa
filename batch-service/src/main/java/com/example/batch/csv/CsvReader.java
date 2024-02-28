@@ -1,4 +1,4 @@
-package com.example.batch.component.reader;
+package com.example.batch.csv;
 
 import com.example.batch.config.DetailStockFieldSetMapper;
 import com.example.batch.dto.DetailStockDTO;

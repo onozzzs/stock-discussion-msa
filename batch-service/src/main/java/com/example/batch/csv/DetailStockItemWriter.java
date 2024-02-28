@@ -1,7 +1,7 @@
-package com.example.batch.component.writer;
+package com.example.batch.csv;
 
 import com.example.batch.model.DetailStock;
-import com.example.batch.repository.BatchRepository;
+import com.example.batch.repository.StockJdbcRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
@@ -12,10 +12,10 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 public class DetailStockItemWriter implements ItemWriter<DetailStock> {
-    private final BatchRepository batchRepository;
+    private final StockJdbcRepository stockJdbcRepository;
 
     @Override
     public void write(Chunk<? extends DetailStock> chunk) throws Exception {
-        batchRepository.saveDetails((List<DetailStock>) chunk.getItems(), "detail_stock");
+        stockJdbcRepository.saveDetails((List<DetailStock>) chunk.getItems(), "detail_stock");
     }
 }

@@ -19,6 +19,6 @@ spring:
       ddl-auto: update
   batch:
     job:
-      name: csvFileItemReaderJob
+      name: stockIndicatorJob
     jdbc:
       initialize-schema: always

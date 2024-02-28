@@ -1,7 +1,7 @@
-package com.example.batch.component.writer;
+package com.example.batch.dailyStock;
 
 import com.example.batch.model.DailyStock;
-import com.example.batch.repository.BatchRepository;
+import com.example.batch.repository.StockJdbcRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
@@ -18,12 +18,12 @@ public class DailyStockItemWriter implements ItemWriter<List<DailyStock>> {
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private BatchRepository batchRepository;
+    private StockJdbcRepository stockJdbcRepository;
 
     @Override
     public void write(Chunk<? extends List<DailyStock>> chunk) throws Exception {
         for (List<DailyStock> dailyStockList : chunk) {
-            batchRepository.saveAll(dailyStockList);
+            stockJdbcRepository.saveAll(dailyStockList);
         }
     }
 }
