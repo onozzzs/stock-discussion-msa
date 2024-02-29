@@ -1,20 +1,18 @@
 package com.example.activity.service;
 
 import com.example.activity.api.FollowAPI;
-import com.example.activity.dto.ActivityRequestDTO;
-import com.example.activity.dto.FollowDTO;
-import com.example.activity.dto.PostRequestDTO;
-import com.example.activity.dto.SearchDTO;
-import com.example.activity.model.Category;
-import com.example.user.model.Follow;
+import com.example.activity.api.UserAPI;
+import com.example.activity.dto.*;
+import com.example.activity.dto.post.PostRequestDTO;
+import com.example.activity.dto.post.PostResponseDTO;
+import com.example.activity.dto.post.PostUpdateRequestDTO;
 import com.example.activity.model.Post;
 import com.example.activity.repository.PostRepository;
-import com.example.user.model.User;
-import com.example.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -31,9 +29,6 @@ public class PostService {
     private PostRepository postRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private PostActivityServiceImpl activityService;
 
     @Autowired
@@ -42,17 +37,17 @@ public class PostService {
     @Autowired
     private FollowAPI followAPI;
 
+    @Autowired
+    private UserAPI userAPI;
+
     public void savePost(HttpServletRequest request, PostRequestDTO requestDTO) {
         String userId = tokenProvider.getUserId(request);
-        User writer = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("user not found"));
+        UserDTO userDTO = userAPI.getUserByUserId(userId);
 
-        Post post = Post.builder()
-                .title(requestDTO.getTitle())
-                .content(requestDTO.getContent())
-                .ticker(requestDTO.getTicker())
-                .userId(userId)
-                .username(writer.getUsername())
-                .build();
+        Post post = Post.toEntity(requestDTO);
+        post.setUserId(userId);
+        post.setUsername(userDTO.getUsername());
+
         postRepository.save(post);
 
 //        ActivityRequestDTO activityRequestDTO = ActivityRequestDTO.builder()
@@ -64,73 +59,96 @@ public class PostService {
 //        activityService.makeAndSaveActivity(activityRequestDTO);
     }
 
-    public Page<Post> retrieveBoard(Pageable pageable, String ticker) {
+    public Page<PostResponseDTO> retrieveBoard(Pageable pageable, String ticker) {
         Page<Post> posts = postRepository.findByTicker(pageable, ticker);
-        return posts;
+        Page<PostResponseDTO> postResponseDTOs = posts.map(PostResponseDTO::new);
+
+        return postResponseDTOs;
     }
 
-    public Page<Post> search(SearchDTO searchDTO) {
-        Pageable pageable = PageRequest.of(searchDTO.getPage(), PAGE_SIZE);
-        if (searchDTO.getType().equals("username")) {
-            return postRepository.findByUsername(pageable, searchDTO.getKeyword());
-        }
-        if (searchDTO.getType().equals("title")) {
-            return postRepository.findByTitleContaining(pageable, searchDTO.getKeyword());
-        }
-        return postRepository.findByContentContaining(pageable, searchDTO.getKeyword());
+    public Page<PostResponseDTO> getMyPost(HttpServletRequest request, Pageable pageable) {
+        String userId = tokenProvider.getUserId(request);
+
+        Page<Post> postPage = postRepository.findByUserId(pageable, userId);
+        Page<PostResponseDTO> postResponseDTOs = postPage.map(PostResponseDTO::new);
+        return postResponseDTOs;
     }
 
+    public Page<PostResponseDTO> getAllPost(HttpServletRequest request) {
+        String userId = tokenProvider.getUserId(request);
 
-//    public List<Post> getPost(HttpServletRequest request) {
-//        String userId = tokenProvider.getUserId(request);
-//        List<FollowDTO> followings = followAPI.getFollowings(userId);
-//        List<Post> posts = postRepository.findByWriterId(userId);
-//
-//        List<Post> updatedPosts = addPost(posts, followings);
-//        return sortPostByDesc(updatedPosts);
-//    }
-//
-//    public List<Post> getFollowerPost(HttpServletRequest request) {
-//        String userId = tokenProvider.getUserId(request);
-//        List<FollowDTO> followers = followAPI.getFollowers(userId);
-//        List<Post> posts = new ArrayList<>();
-//
-//        List<Post> updatedPosts = addPost(posts, followers);
-//        return sortPostByDesc(updatedPosts);
-//    }
-//
-//    public void updatePost(Long id, Post post) {
-//        Optional<Post> originalPost = postRepository.findById(id);
-//        originalPost.ifPresent(newPost -> {
-//            newPost.setTitle(post.getTitle());
-//            newPost.setContent(post.getContent());
-//
-//            postRepository.save(newPost);
-//        });
-//    }
-//
-//    public void deletePost(HttpServletRequest request, final Long postId) {
-//        Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchElementException("post not found"));
-//        postRepository.delete(post);
-//    }
-//
-//    private List<Post> addPost(List<Post> posts, List<FollowDTO> targets) {
-//        List<Post> results = posts;
-//        for (FollowDTO target : targets) {
-//            User user = userRepository.findByUsername(target.getUsername());
-//            List<Post> targetPosts = postRepository.findByWriterId(user.getId());
-//            for (Post post : targetPosts) {
-//                results.add(post);
-//            }
-//        }
-//        return results;
-//    }
-//
-//    private List<Post> sortPostByDesc(List<Post> posts) {
-//        List<Post> sortedPosts = posts.stream()
-//                .sorted(Comparator.comparing(Post::getCreatedAt).reversed())
-//                .collect(Collectors.toList());
-//
-//        return sortedPosts;
-//    }
+        List<FollowDTO> followings = followAPI.getFollowings(userId);
+
+        List<Post> posts = postRepository.findByUserId(userId);
+        List<Post> allPosts = addPost(posts, followings);
+        List<Post> sortedPosts = sortPostByDesc(allPosts);
+
+        List<PostResponseDTO> postResponseDTOs = sortedPosts.stream().map(PostResponseDTO::new).collect(Collectors.toList());
+
+        return convertListToPage(postResponseDTOs, 0);
+    }
+
+    public void updatePost(Long id, PostUpdateRequestDTO requestDTO) {
+        Optional<Post> originalPost = postRepository.findById(id);
+        originalPost.ifPresent(newPost -> {
+            newPost.setTitle(requestDTO.getTitle());
+            newPost.setContent(requestDTO.getContent());
+
+            postRepository.save(newPost);
+        });
+    }
+
+    public void deletePost(final Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchElementException("post not found"));
+        postRepository.delete(post);
+    }
+
+    public Page<PostResponseDTO> search(SearchDTO searchDTO) {
+        String type = searchDTO.getType();
+        String keyword = searchDTO.getKeyword();
+
+        List<Post> posts = getPostByType(type, keyword);
+        List<PostResponseDTO> postResponseDTOs = posts.stream().map(PostResponseDTO::new).collect(Collectors.toList());
+
+        return convertListToPage(postResponseDTOs, searchDTO.getPage());
+    }
+
+    private List<Post> getPostByType(String type, String keyword) {
+        switch (type) {
+            case "username":
+                UserDTO userDTO = userAPI.getUserByUsername(keyword);
+                return postRepository.findByUserId(userDTO.getId());
+            case "title":
+                return postRepository.findByTitleContaining(keyword);
+            case "content":
+                return postRepository.findByContentContaining(keyword);
+            default:
+                throw new RuntimeException("invalid type");
+        }
+    }
+
+    private Page<PostResponseDTO> convertListToPage(List<PostResponseDTO> content, int pageNumber) {
+        PageRequest pageRequest = PageRequest.of(pageNumber, PAGE_SIZE);
+
+        return new PageImpl<>(content, pageRequest, content.size());
+    }
+
+    private List<Post> addPost(List<Post> posts, List<FollowDTO> followings) {
+        List<Post> results = posts;
+        for (FollowDTO follow : followings) {
+            List<Post> followingPosts = postRepository.findByUserId(follow.getUserId());
+            for (Post post : followingPosts) {
+                results.add(post);
+            }
+        }
+        return results;
+    }
+
+    private List<Post> sortPostByDesc(List<Post> posts) {
+        List<Post> sortedPosts = posts.stream()
+                .sorted(Comparator.comparing(Post::getCreatedAt).reversed())
+                .collect(Collectors.toList());
+
+        return sortedPosts;
+    }
 }

@@ -31,7 +31,7 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/api/user/auth/**
+            - Path=/api/auth/**
             - Method=POST
           filters:
             - RemoveRequestHeader=Cookie
@@ -60,7 +60,9 @@ spring:
           uri: lb://ACTIVITY-SERVICE
           predicates:
             - Path=/api/post/**
-            - Method=GET, POST
+            - Method=GET, POST, PUT, DELETE
+          filters:
+            - AuthorizationHeaderFilter
         - id: stock-service
           uri: lb://STOCK-SERVICE
           predicates:

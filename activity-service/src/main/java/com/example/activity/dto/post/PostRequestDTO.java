@@ -1,4 +1,4 @@
-package com.example.activity.dto;
+package com.example.activity.dto.post;
 
 import com.example.activity.model.Post;
 import lombok.AllArgsConstructor;
@@ -12,14 +12,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PostRequestDTO {
     private String title;
-    private String content;
     private String ticker;
+    private String content;
 
     public static Post toEntity(PostRequestDTO postRequestDTO) {
         return Post.builder()
                 .title(postRequestDTO.getTitle())
-                .content(postRequestDTO.getContent())
                 .ticker(postRequestDTO.getTicker())
+                .content(postRequestDTO.getContent())
                 .build();
     }
 }

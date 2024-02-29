@@ -1,6 +1,6 @@
 package com.example.activity.model;
 
-import com.example.user.model.User;
+import com.example.activity.dto.post.PostRequestDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,9 +8,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
-@Builder
 @Data
 @Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Post extends BaseTimeEntity{
@@ -20,10 +20,6 @@ public class Post extends BaseTimeEntity{
 
     private String ticker;
 
-    private String userId;
-
-    private String username;
-
     private String title;
 
     private String content;
@@ -31,7 +27,19 @@ public class Post extends BaseTimeEntity{
     @ColumnDefault("0")
     private int likeCount;
 
+    private String userId;
+
+    private String username;
+
     public void updateLikeCount(int likeCount) {
         this.likeCount = likeCount;
+    }
+
+    public static Post toEntity(PostRequestDTO postRequestDTO) {
+        return Post.builder()
+                .title(postRequestDTO.getTitle())
+                .ticker(postRequestDTO.getTicker())
+                .content(postRequestDTO.getContent())
+                .build();
     }
 }

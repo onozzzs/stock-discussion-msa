@@ -11,10 +11,12 @@ import java.util.Optional;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long>{
     Page<Post> findByTicker(Pageable pageable, String ticker);
-    Page<Post> findByUsername(Pageable pageable, String username);
+    Page<Post> findByUserId(Pageable pageable, String userId);
     Page<Post> findByTitleContaining(Pageable pageable, String title);
     Page<Post> findByContentContaining(Pageable pageable, String content);
 
     List<Post> findByUserId(String userId);
+    List<Post> findByTitleContaining(String title);
+    List<Post> findByContentContaining(String content);
     Optional<Post> findById(Long postId);
 }
