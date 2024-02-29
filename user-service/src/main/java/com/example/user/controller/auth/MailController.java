@@ -1,6 +1,6 @@
 package com.example.user.controller.auth;
 
-import com.example.user.dto.UserDTO;
+import com.example.user.dto.UserResponseDTO;
 import com.example.user.model.User;
 import com.example.user.service.AuthService;
 import com.example.user.service.MailService;
@@ -32,7 +32,7 @@ public class MailController {
     public ResponseEntity<?> verifyMail(@RequestParam("mail") String mail,
                                         @RequestParam("auth") String auth) {
         User changedUser = mailService.checkMail(mail, auth);
-        UserDTO responseUserDTO = new UserDTO(changedUser.getId(), changedUser.getMail(), changedUser.getPassword(), changedUser.getUsername(), changedUser.isStatus());
-        return ResponseEntity.ok().body(responseUserDTO);
+        UserResponseDTO responseUserResponseDTO = new UserResponseDTO(changedUser.getId(), changedUser.getMail(), changedUser.getPassword(), changedUser.getUsername(), changedUser.isStatus());
+        return ResponseEntity.ok().body(responseUserResponseDTO);
     }
 }

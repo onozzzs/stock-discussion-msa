@@ -1,7 +1,7 @@
 package com.example.user.service;
 
 import com.example.user.dto.PasswordDTO;
-import com.example.user.dto.UserDTO;
+import com.example.user.dto.UserResponseDTO;
 import com.example.user.model.User;
 import com.example.user.repository.UserRepository;
 import com.example.user.security.TokenProvider;
@@ -52,10 +52,10 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUser(HttpServletRequest request, UserDTO userDTO) {
+    public void updateUser(HttpServletRequest request, UserResponseDTO userResponseDTO) {
         String userId = getUserId(request);
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("user not found"));
-        user.updateUsernameAndContent(userDTO.getUsername(), userDTO.getContent());
+        user.updateUsernameAndContent(userResponseDTO.getUsername(), userResponseDTO.getContent());
     }
 
     private Boolean validatePassword(final String oldPassword, final String encryptedPassword) {

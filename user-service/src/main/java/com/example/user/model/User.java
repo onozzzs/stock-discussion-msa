@@ -34,10 +34,6 @@ public class User {
     @OneToMany(mappedBy = "following")
     private List<Follow> followerList;
 
-//    @Nullable
-//    @OneToMany(mappedBy = "user")
-//    private List<Activity> activityList;
-
     public void updateStatus() {
         this.status = true;
     }

@@ -1,7 +1,7 @@
 package com.example.user.controller;
 
 import com.example.user.dto.PasswordDTO;
-import com.example.user.dto.UserDTO;
+import com.example.user.dto.UserResponseDTO;
 import com.example.user.service.S3UploadService;
 import com.example.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,8 +41,8 @@ public class UserController {
     }
 
     @PostMapping("/updateUser")
-    public ResponseEntity<?> updateUser(@RequestBody UserDTO userDTO, HttpServletRequest request) {
-        userService.updateUser(request, userDTO);
+    public ResponseEntity<?> updateUser(@RequestBody UserResponseDTO userResponseDTO, HttpServletRequest request) {
+        userService.updateUser(request, userResponseDTO);
         return ResponseEntity.ok().body("User update completed");
     }
 }

@@ -1,15 +1,17 @@
 package com.example.user.util;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
+@Component
 @RequiredArgsConstructor
-@Service
 public class RedisUtil {
     private final RedisTemplate<String, String> redisTemplate;
 
