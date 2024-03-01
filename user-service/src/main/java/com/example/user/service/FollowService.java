@@ -2,9 +2,9 @@ package com.example.user.service;
 
 import com.example.user.api.ActivityAPI;
 import com.example.user.api.NotificationAPI;
-import com.example.user.dto.ActivityRequestDTO;
-import com.example.user.dto.FollowResponseDTO;
-import com.example.user.model.Category;
+import com.example.user.dto.FollowDTO;
+import com.example.user.dto.FollowerDTO;
+import com.example.user.dto.FollowingDTO;
 import com.example.user.model.Follow;
 import com.example.user.repository.FollowRepository;
 import com.example.user.model.User;
@@ -56,7 +56,13 @@ public class FollowService {
                 .build();
 
         followRepository.save(newFollow);
-        makeAndSaveFollowActivity(userId, follower.getUsername(), Category.FOLLOW, following.getUsername());
+
+        FollowDTO followDTO = FollowDTO.builder()
+                .followId(newFollow.getId())
+                .followerId(newFollow.getFollower().getId())
+                .followingId(newFollow.getFollowing().getId())
+                .build();
+        activityAPI.saveActivity(followDTO);
     }
 
     public List<String> getFollowings(HttpServletRequest request) {
@@ -69,15 +75,15 @@ public class FollowService {
         return followings;
     }
 
-    public List<FollowResponseDTO> getFollowingDTO(String userId) {
+    public List<FollowingDTO> getFollowingDTO(String userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("user not found"));
-        List<FollowResponseDTO> followings = new ArrayList<>();
+        List<FollowingDTO> followings = new ArrayList<>();
         for (Follow follow : user.getFollowingList()) {
-            FollowResponseDTO followingResponseDTO = FollowResponseDTO.builder()
-                    .userId(follow.getFollowing().getId())
-                    .username(follow.getFollowing().getUsername())
+            FollowingDTO followingDTO = FollowingDTO.builder()
+                    .followingId(follow.getFollowing().getId())
+                    .followingName(follow.getFollowing().getUsername())
                     .build();
-            followings.add(followingResponseDTO);
+            followings.add(followingDTO);
         }
         return followings;
     }
@@ -92,15 +98,15 @@ public class FollowService {
         return followers;
     }
 
-    public List<FollowResponseDTO> getFollowerDTO(final String userId) {
+    public List<FollowerDTO> getFollowerDTO(final String userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("user not found"));
-        List<FollowResponseDTO> followers = new ArrayList<>();
+        List<FollowerDTO> followers = new ArrayList<>();
         for (Follow follow : user.getFollowerList()) {
-            FollowResponseDTO followResponseDTO = FollowResponseDTO.builder()
-                    .userId(follow.getFollower().getId())
-                    .username(follow.getFollower().getUsername())
+            FollowerDTO followDTO = FollowerDTO.builder()
+                    .followerId(follow.getFollower().getId())
+                    .followerName(follow.getFollower().getUsername())
                     .build();
-            followers.add(followResponseDTO);
+            followers.add(followDTO);
         }
         return followers;
     }
@@ -108,16 +114,6 @@ public class FollowService {
     private String getUserId(HttpServletRequest request) {
         String token = tokenProvider.resolveAccessToken(request);
         return tokenProvider.validateAndGetUserId(token);
-    }
-
-    private void makeAndSaveFollowActivity(String userId, String username, Category category, String targetName) {
-        ActivityRequestDTO activityRequestDTO = ActivityRequestDTO.builder()
-                .userId(userId)
-                .username(username)
-                .category(category)
-                .targetName(targetName)
-                .build();
-        activityAPI.updateActivity(activityRequestDTO);
     }
 
     private void validate(User user) {
