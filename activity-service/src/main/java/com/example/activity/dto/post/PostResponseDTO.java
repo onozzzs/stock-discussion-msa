@@ -1,11 +1,13 @@
 package com.example.activity.dto.post;
 
+import com.example.activity.dto.comment.CommentResponseDTO;
 import com.example.activity.model.Post;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -16,6 +18,7 @@ public class PostResponseDTO {
     private String content;
     private String username;
     private int likeCount;
+    private List<CommentResponseDTO> commentResponseDTOList;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

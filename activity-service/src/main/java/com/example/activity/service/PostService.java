@@ -3,10 +3,13 @@ package com.example.activity.service;
 import com.example.activity.api.FollowAPI;
 import com.example.activity.api.UserAPI;
 import com.example.activity.dto.*;
+import com.example.activity.dto.comment.CommentResponseDTO;
 import com.example.activity.dto.post.PostRequestDTO;
 import com.example.activity.dto.post.PostResponseDTO;
 import com.example.activity.dto.post.PostUpdateRequestDTO;
+import com.example.activity.model.Category;
 import com.example.activity.model.Post;
+import com.example.activity.repository.CommentRepository;
 import com.example.activity.repository.PostRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +32,10 @@ public class PostService {
     private PostRepository postRepository;
 
     @Autowired
-    private PostActivityServiceImpl activityService;
+    private CommentRepository commentRepository;
+
+    @Autowired
+    private ActivityService activityService;
 
     @Autowired
     private TokenProvider tokenProvider;
@@ -50,19 +56,15 @@ public class PostService {
 
         postRepository.save(post);
 
-//        ActivityRequestDTO activityRequestDTO = ActivityRequestDTO.builder()
-//                .userId(userId)
-//                .username(writer.getUsername())
-//                .category(Category.POST)
-//                .targetName(String.valueOf(post.getId()))
-//                .build();
+        ActivityRequestDTO activityRequestDTO = new ActivityRequestDTO(post);
+        activityRequestDTO.setCategory(Category.POST);
+
 //        activityService.makeAndSaveActivity(activityRequestDTO);
     }
 
-    public Page<PostResponseDTO> retrieveBoard(Pageable pageable, String ticker) {
+    public Page<PostResponseDTO> getPostByTicker(Pageable pageable, String ticker) {
         Page<Post> posts = postRepository.findByTicker(pageable, ticker);
         Page<PostResponseDTO> postResponseDTOs = posts.map(PostResponseDTO::new);
-
         return postResponseDTOs;
     }
 

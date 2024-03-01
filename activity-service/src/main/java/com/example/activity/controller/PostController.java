@@ -25,8 +25,8 @@ public class PostController {
     }
 
     @GetMapping("/board")
-    public ResponseEntity<?> retrieveBoard(@RequestParam(value = "ticker") String ticker, Pageable pageable) {
-        Page<PostResponseDTO> posts = postService.retrieveBoard(pageable, ticker);
+    public ResponseEntity<?> getPostByTicker(@RequestParam(value = "postId") String ticker, Pageable pageable) {
+        Page<PostResponseDTO> posts = postService.getPostByTicker(pageable, ticker);
         return ResponseEntity.ok().body(posts);
     }
 

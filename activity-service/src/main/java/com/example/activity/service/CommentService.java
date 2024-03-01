@@ -1,17 +1,24 @@
 package com.example.activity.service;
 
+import com.amazonaws.services.kms.model.NotFoundException;
+import com.example.activity.api.UserAPI;
 import com.example.activity.dto.ActivityRequestDTO;
+import com.example.activity.dto.CommentActivityDTO;
+import com.example.activity.dto.CommentRequestDTO;
+import com.example.activity.dto.UserDTO;
+import com.example.activity.dto.comment.CommentResponseDTO;
+import com.example.activity.dto.post.PostResponseDTO;
 import com.example.activity.model.Category;
 import com.example.activity.model.Comment;
 import com.example.activity.repository.CommentRepository;
 import com.example.activity.model.Post;
 import com.example.activity.repository.PostRepository;
-import com.example.user.model.User;
-import com.example.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -20,35 +27,55 @@ public class CommentService {
     private CommentRepository commentRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private PostRepository postRepository;
 
     @Autowired
-    private PostActivityServiceImpl activityService;
+    private ActivityService activityService;
+
+    @Autowired
+    private UserAPI userAPI;
 
     @Autowired
     private TokenProvider tokenProvider;
 
-    public void addComment(HttpServletRequest request, final Long postId, Comment comment) {
+    public PostResponseDTO getBoard(HttpServletRequest request, final Long postId) {
         String userId = tokenProvider.getUserId(request);
+        Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchElementException());
+        List<CommentResponseDTO> commentResponseDTOs = commentRepository.findByPostId(postId);
 
-        User user = userRepository.findById(userId).orElseThrow(() -> new NoSuchElementException("user not found"));
+        PostResponseDTO postResponseDTO = new PostResponseDTO(post);
+        postResponseDTO.setCommentResponseDTOList(commentResponseDTOs);
+
+        return postResponseDTO;
+    }
+
+    public void saveComment(HttpServletRequest request, final Long postId, CommentRequestDTO commentRequestDTO) {
+        String userId = tokenProvider.getUserId(request);
+        UserDTO userDTO = userAPI.getUserByUserId(userId);
         Post post = postRepository.findById(postId).orElseThrow(() -> new NoSuchElementException("post not found"));
 
-        comment.setUser(user);
-        comment.setPost(post);
+        Comment comment = CommentRequestDTO.toEntity(commentRequestDTO);
 
+        Comment parentComment;
+        if (commentRequestDTO.getParentId() != null) {
+            parentComment = commentRepository.findById(commentRequestDTO.getParentId())
+                    .orElseThrow(() -> new NotFoundException("Could not found comment id : " + commentRequestDTO.getParentId()));
+            comment.updateParent(parentComment);
+        }
+
+        comment.updateUserId(userId);
+        comment.updatePost(post);
+        comment.updateIsDeleted(null);
         commentRepository.save(comment);
 
-        ActivityRequestDTO activityRequestDTO = ActivityRequestDTO.builder()
-                .username(user.getUsername())
-                .userId(user.getId())
-                .category(Category.COMMENT)
-                .targetName(String.valueOf(post.getId()))
-                .build();
-
-        activityService.makeAndSaveActivity(activityRequestDTO);
+//        String content = Category.COMMENT.makeContent(userDTO.getUsername(), post.getTitle(), comment.getContent());
+//        CommentActivityDTO commentActivityDTO = CommentActivityDTO.builder()
+//                .userId(userId)
+//                .commentId(comment.getId())
+//                .content(content)
+//                .category(Category.COMMENT)
+//                .build();
+//
+//        activityService.saveCommentActivity(commentActivityDTO);
     }
 }

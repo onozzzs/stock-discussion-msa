@@ -27,6 +27,9 @@ public class Post extends BaseTimeEntity{
     @ColumnDefault("0")
     private int likeCount;
 
+    @ColumnDefault("0")
+    private int commentCount;
+
     private String userId;
 
     private String username;

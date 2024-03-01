@@ -1,6 +1,8 @@
 package com.example.activity.controller;
 
 import com.example.activity.dto.CommentRequestDTO;
+import com.example.activity.dto.comment.CommentResponseDTO;
+import com.example.activity.dto.post.PostResponseDTO;
 import com.example.activity.model.Comment;
 import com.example.activity.service.CommentService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/activity/comment")
@@ -16,12 +20,15 @@ public class CommentController {
     @Autowired
     private CommentService commentService;
 
-    @PostMapping("/post/{postId}")
-    public ResponseEntity<?> commentOnPost(HttpServletRequest request, @PathVariable Long postId, @RequestBody CommentRequestDTO requestDTO) {
-        Comment comment = Comment.builder()
-                .content(requestDTO.getContent())
-                .build();
-        commentService.addComment(request, postId, comment);
+    @GetMapping("/{postId}")
+    public ResponseEntity<?> getBoard(HttpServletRequest request, @PathVariable(value = "postId") Long postId) {
+        PostResponseDTO postResponseDTOs = commentService.getBoard(request, postId);
+        return ResponseEntity.ok().body(postResponseDTOs);
+    }
+
+    @PostMapping("/{postId}")
+    public ResponseEntity<?> comment(HttpServletRequest request, @PathVariable(value = "postId") Long postId, @RequestBody CommentRequestDTO requestDTO) {
+        commentService.saveComment(request, postId, requestDTO);
         return ResponseEntity.ok().body("comment is saved");
     }
 }
