@@ -2,20 +2,17 @@ package com.example.activity.service;
 
 import com.amazonaws.services.kms.model.NotFoundException;
 import com.example.activity.api.UserAPI;
-import com.example.activity.dto.ActivityRequestDTO;
-import com.example.activity.dto.CommentActivityDTO;
-import com.example.activity.dto.CommentRequestDTO;
+import com.example.activity.dto.comment.CommentActivityDTO;
+import com.example.activity.dto.comment.CommentRequestDTO;
 import com.example.activity.dto.UserDTO;
 import com.example.activity.dto.comment.CommentResponseDTO;
 import com.example.activity.dto.post.PostResponseDTO;
-import com.example.activity.model.Category;
 import com.example.activity.model.Comment;
 import com.example.activity.repository.CommentRepository;
 import com.example.activity.model.Post;
 import com.example.activity.repository.PostRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -68,14 +65,6 @@ public class CommentService {
         comment.updateIsDeleted(null);
         commentRepository.save(comment);
 
-//        String content = Category.COMMENT.makeContent(userDTO.getUsername(), post.getTitle(), comment.getContent());
-//        CommentActivityDTO commentActivityDTO = CommentActivityDTO.builder()
-//                .userId(userId)
-//                .commentId(comment.getId())
-//                .content(content)
-//                .category(Category.COMMENT)
-//                .build();
-//
-//        activityService.saveCommentActivity(commentActivityDTO);
+        activityService.saveCommentActivity(comment);
     }
 }

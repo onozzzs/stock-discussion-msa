@@ -4,16 +4,15 @@ import com.example.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Builder
 @Data
 @Entity
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
 public class Follow {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="follow_id")
-    private Integer id;
+    private Long id;
     @ManyToOne
     @JoinColumn(name="following")
     private User following;

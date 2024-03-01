@@ -56,10 +56,7 @@ public class PostService {
 
         postRepository.save(post);
 
-        ActivityRequestDTO activityRequestDTO = new ActivityRequestDTO(post);
-        activityRequestDTO.setCategory(Category.POST);
-
-//        activityService.makeAndSaveActivity(activityRequestDTO);
+        activityService.savePostActivity(post);
     }
 
     public Page<PostResponseDTO> getPostByTicker(Pageable pageable, String ticker) {
@@ -79,7 +76,7 @@ public class PostService {
     public Page<PostResponseDTO> getAllPost(HttpServletRequest request) {
         String userId = tokenProvider.getUserId(request);
 
-        List<FollowDTO> followings = followAPI.getFollowings(userId);
+        List<FollowingDTO> followings = followAPI.getFollowings(userId);
 
         List<Post> posts = postRepository.findByUserId(userId);
         List<Post> allPosts = addPost(posts, followings);
@@ -135,10 +132,10 @@ public class PostService {
         return new PageImpl<>(content, pageRequest, content.size());
     }
 
-    private List<Post> addPost(List<Post> posts, List<FollowDTO> followings) {
+    private List<Post> addPost(List<Post> posts, List<FollowingDTO> followings) {
         List<Post> results = posts;
-        for (FollowDTO follow : followings) {
-            List<Post> followingPosts = postRepository.findByUserId(follow.getUserId());
+        for (FollowingDTO follow : followings) {
+            List<Post> followingPosts = postRepository.findByUserId(follow.getFollowingId());
             for (Post post : followingPosts) {
                 results.add(post);
             }

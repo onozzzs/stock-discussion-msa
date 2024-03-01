@@ -7,6 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FollowDTO {
-    private String userId;
-    private String username;
+    private Long id;
+    private String followerId;
+    private String followingId;
 }

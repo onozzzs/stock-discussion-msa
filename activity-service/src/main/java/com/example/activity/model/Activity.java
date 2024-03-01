@@ -1,6 +1,5 @@
 package com.example.activity.model;
 
-import com.example.activity.model.Category;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,10 +18,14 @@ public class Activity extends BaseTimeEntity {
     @Column(name="activity_id")
     private Long id;
 
-    private String userId;
-
     @Nullable
     private Long postId;
+
+    @Nullable
+    private Long commentId;
+
+    @Nullable
+    private Long followId;
 
     private String content;
 

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FollowDTO {
-    private String userId;
-    private String username;
+    private Long followId;
+    private String followerId;
+    private String followingId;
 }

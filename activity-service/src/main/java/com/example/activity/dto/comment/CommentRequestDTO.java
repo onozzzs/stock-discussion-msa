@@ -1,4 +1,4 @@
-package com.example.activity.dto;
+package com.example.activity.dto.comment;
 
 import com.example.activity.model.Comment;
 import lombok.Data;

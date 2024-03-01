@@ -1,17 +1,13 @@
 package com.example.activity.controller;
 
-import com.example.activity.dto.CommentRequestDTO;
-import com.example.activity.dto.comment.CommentResponseDTO;
+import com.example.activity.dto.comment.CommentRequestDTO;
 import com.example.activity.dto.post.PostResponseDTO;
-import com.example.activity.model.Comment;
 import com.example.activity.service.CommentService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController

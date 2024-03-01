@@ -12,8 +12,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableFeignClients
 @EnableDiscoveryClient
 @SpringBootApplication
-@EntityScan(basePackages = {"com.example"})
-@EnableJpaRepositories(basePackages = {"com.example"})
 public class ActivityServiceApplication{
 
 	public static void main(String[] args) {
